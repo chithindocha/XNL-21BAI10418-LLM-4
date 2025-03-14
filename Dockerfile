@@ -9,14 +9,17 @@ ENV DEBIAN_FRONTEND=noninteractive \
 # Create a new user with ID 1000
 RUN useradd -m -u 1000 user
 
-# Install system dependencies
+# Install system dependencies and Node.js 18
 RUN apt-get update && apt-get install -y \
     python3.10 \
     python3-pip \
-    nodejs \
-    npm \
     git \
-    && rm -rf /var/lib/apt/lists/*
+    curl \
+    gnupg \
+    && rm -rf /var/lib/apt/lists/* \
+    && curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+    && apt-get install -y nodejs \
+    && npm install -g npm@latest
 
 # Switch to the user
 USER user
@@ -49,7 +52,9 @@ RUN npm install
 RUN npm run build
 
 # Set up Nginx for serving frontend
-RUN sudo apt-get update && sudo apt-get install -y nginx
+USER root
+RUN apt-get update && apt-get install -y nginx
+USER user
 
 # Copy Nginx configuration
 COPY --chown=user nginx.conf /etc/nginx/conf.d/default.conf
