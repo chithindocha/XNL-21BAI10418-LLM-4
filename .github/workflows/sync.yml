@@ -3,8 +3,8 @@ name: Sync to Hugging Face Spaces
 on:
   push:
     branches:
-      - main  # or your default branch name
-  workflow_dispatch:  # allows manual triggering
+      - main
+  workflow_dispatch:
 
 jobs:
   sync:
@@ -24,5 +24,5 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          git remote add space https://USER:$HF_TOKEN@huggingface.co/spaces/Chit1324/XNL-21BAI10418-LLM-4
+          git remote add space https://Chit1324:$HF_TOKEN@huggingface.co/spaces/Chit1324/XNL-21BAI10418-LLM-4
           git push space main 

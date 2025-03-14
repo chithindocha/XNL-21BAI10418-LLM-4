@@ -14,7 +14,7 @@ pinned: false
 
 A sophisticated financial chatbot built with FastAPI, React, and DialoGPT. The chatbot provides banking and financial assistance through a modern web interface.
 
-[![Sync to Hugging Face Spaces](https://github.com/YOUR_USERNAME/XNL-21BAI10418-LLM-4/actions/workflows/sync.yml/badge.svg)](https://github.com/YOUR_USERNAME/XNL-21BAI10418-LLM-4/actions/workflows/sync.yml)
+[![Sync to Hugging Face Spaces](https://github.com/Chit1324/XNL-21BAI10418-LLM-4/actions/workflows/sync.yml/badge.svg)](https://github.com/Chit1324/XNL-21BAI10418-LLM-4/actions/workflows/sync.yml)
 
 ## Features
 
@@ -54,7 +54,7 @@ Try the live demo on Hugging Face Spaces: [Financial Chatbot Demo](https://huggi
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/YOUR_USERNAME/XNL-21BAI10418-LLM-4.git
+   git clone https://github.com/Chit1324/XNL-21BAI10418-LLM-4.git
    cd XNL-21BAI10418-LLM-4
    ```
 
