@@ -5,38 +5,38 @@ import logging
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from collections import deque
+import os
 
 logger = logging.getLogger(__name__)
 
 class ChatService:
     def __init__(self):
-        self.model = None
-        self.tokenizer = None
-        self.conversation_history = {}  # Store conversations by user_id
-        self.max_history = 5  # Keep last 5 exchanges
-        self.load_model()
-
-    def load_model(self):
-        """Load the fine-tuned model and tokenizer."""
         try:
-            model_path = "finetuned_model"  # Path to the fine-tuned model
-            self.model = AutoModelForCausalLM.from_pretrained(
-                model_path,
-                torch_dtype=torch.float32,  # Use float32 for better compatibility
-                device_map="auto"
-            )
-            self.tokenizer = AutoTokenizer.from_pretrained(model_path)
-            logger.info("Successfully loaded fine-tuned model and tokenizer")
+            # Check if we should use fallback model
+            use_fallback = os.environ.get("USE_FALLBACK_MODEL", "false").lower() == "true"
+            fallback_model = os.environ.get("FALLBACK_MODEL", "microsoft/DialoGPT-small")
+            model_path = os.environ.get("MODEL_PATH", "finetuned_model")
+
+            if use_fallback:
+                logger.info(f"Using fallback model: {fallback_model}")
+                self.model = AutoModelForCausalLM.from_pretrained(fallback_model)
+                self.tokenizer = AutoTokenizer.from_pretrained(fallback_model)
+            else:
+                logger.info(f"Loading model from: {model_path}")
+                self.model = AutoModelForCausalLM.from_pretrained(model_path)
+                self.tokenizer = AutoTokenizer.from_pretrained(model_path)
+                
+            logger.info("Model loaded successfully")
+            
         except Exception as e:
             logger.error(f"Error loading model: {str(e)}")
-            # Fallback to base model if fine-tuned model is not available
-            self.model = AutoModelForCausalLM.from_pretrained(
-                "facebook/opt-125m",
-                torch_dtype=torch.float32,
-                device_map="auto"
-            )
-            self.tokenizer = AutoTokenizer.from_pretrained("facebook/opt-125m")
-            logger.info("Using base model as fallback")
+            # Fallback to DialoGPT if there's an error
+            logger.info("Falling back to DialoGPT-small model")
+            self.model = AutoModelForCausalLM.from_pretrained("microsoft/DialoGPT-small")
+            self.tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-small")
+
+        self.conversation_history = {}  # Store conversations by user_id
+        self.max_history = 5  # Keep last 5 exchanges
 
     def _get_conversation_context(self, user_id: str) -> str:
         """Get the conversation history for a user."""

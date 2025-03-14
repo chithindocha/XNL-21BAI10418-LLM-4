@@ -3,6 +3,7 @@ import sys
 import os
 import time
 import logging
+import shutil
 from pathlib import Path
 
 # Configure logging
@@ -11,6 +12,29 @@ logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
+
+def setup_model_directory():
+    """Set up the model directory with a fallback model if needed"""
+    try:
+        app_root = Path(__file__).parent.absolute()
+        model_path = app_root / "backend" / "finetuned_model"
+        
+        # Check if model directory exists and has required files
+        if not model_path.exists() or not (model_path / "config.json").exists():
+            logger.info("Model files not found, using fallback model: microsoft/DialoGPT-small")
+            # Set environment variable to use the fallback model
+            os.environ["USE_FALLBACK_MODEL"] = "true"
+            os.environ["FALLBACK_MODEL"] = "microsoft/DialoGPT-small"
+        else:
+            logger.info("Using finetuned model from local directory")
+            os.environ["USE_FALLBACK_MODEL"] = "false"
+            
+        return str(model_path)
+    except Exception as e:
+        logger.error(f"Error setting up model directory: {str(e)}")
+        import traceback
+        logger.error(f"Traceback: {traceback.format_exc()}")
+        sys.exit(1)
 
 def run_backend():
     """Start the FastAPI backend server"""
@@ -125,14 +149,16 @@ def run_nginx():
 def main():
     """Main function to start all services"""
     try:
-        # Set environment variables
-        app_root = Path(__file__).parent.absolute()
-        os.environ["MODEL_PATH"] = str(app_root / "backend" / "finetuned_model")
+        # Set up model directory and environment variables
+        model_path = setup_model_directory()
+        os.environ["MODEL_PATH"] = model_path
         os.environ["CUDA_VISIBLE_DEVICES"] = "0"
         
         # Log environment for debugging
         logger.info(f"Environment variables:")
         logger.info(f"MODEL_PATH: {os.environ.get('MODEL_PATH')}")
+        logger.info(f"USE_FALLBACK_MODEL: {os.environ.get('USE_FALLBACK_MODEL')}")
+        logger.info(f"FALLBACK_MODEL: {os.environ.get('FALLBACK_MODEL')}")
         logger.info(f"PYTHONPATH: {os.environ.get('PYTHONPATH')}")
         logger.info(f"Current directory: {os.getcwd()}")
         
