@@ -53,7 +53,12 @@ RUN npm run build
 
 # Set up Nginx for serving frontend
 USER root
-RUN apt-get update && apt-get install -y nginx
+RUN apt-get update && apt-get install -y nginx \
+    && mkdir -p /var/log/nginx \
+    && mkdir -p /var/run \
+    && chown -R user:user /var/log/nginx \
+    && chown -R user:user /var/run \
+    && chown -R user:user /etc/nginx/conf.d
 USER user
 
 # Copy Nginx configuration
