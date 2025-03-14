@@ -66,5 +66,8 @@ EXPOSE 7860 8000
 ENV MODEL_PATH=/app/finetuned_model \
     CUDA_VISIBLE_DEVICES=0
 
+# Set working directory back to app root
+WORKDIR $HOME/app
+
 # Start the application
 CMD ["python3", "app.py"] 
