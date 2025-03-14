@@ -150,7 +150,7 @@ git add .
 git commit -m "Initial commit"
 
 # Add Hugging Face Space as remote
-git remote add space https://huggingface.co/spaces/YOUR_USERNAME/YOUR_SPACE_NAME
+git remote add space https://huggingface.co/spaces/Chit1324/XNL-21BAI10418-LLM-4
 
 # Push to Hugging Face
 git push space main
@@ -164,7 +164,7 @@ git push space main
 5. Access your application:
    - Once deployed, your app will be available at:
      ```
-     https://YOUR_USERNAME-YOUR_SPACE_NAME.hf.space
+     https://Chit1324-XNL-21BAI10418-LLM-4.hf.space
      ```
 
 ## API Endpoints
