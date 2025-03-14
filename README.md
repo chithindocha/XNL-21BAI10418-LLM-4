@@ -1,3 +1,14 @@
+---
+title: Financial Assistant Chatbot
+emoji: 💬
+colorFrom: blue
+colorTo: indigo
+sdk: docker
+sdk_version: "3.8"
+app_file: backend/app/main.py
+pinned: false
+---
+
 # Financial Assistant Chatbot
 
 A modern, responsive chatbot application for financial queries and assistance, built with React, FastAPI, and the Zephyr-7B language model.
