@@ -9,7 +9,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
 # Create a new user with ID 1000
 RUN useradd -m -u 1000 user
 
-# Install system dependencies and Node.js 18
+# Install system dependencies and Node.js 20
 RUN apt-get update && apt-get install -y \
     python3.10 \
     python3-pip \
@@ -17,9 +17,9 @@ RUN apt-get update && apt-get install -y \
     curl \
     gnupg \
     && rm -rf /var/lib/apt/lists/* \
-    && curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs \
-    && npm install -g npm@latest
+    && npm install -g npm@10.2.4
 
 # Switch to the user
 USER user
