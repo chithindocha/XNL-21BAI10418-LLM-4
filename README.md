@@ -10,43 +10,105 @@ app_file: app.py
 pinned: false
 ---
 
-# Financial Assistant Chatbot
+# Financial Chatbot with DialoGPT
 
-A modern, responsive chatbot application for financial queries and assistance, built with React, FastAPI, and the Zephyr-7B language model.
+A sophisticated financial chatbot built with FastAPI, React, and DialoGPT. The chatbot provides banking and financial assistance through a modern web interface.
+
+[![Sync to Hugging Face Spaces](https://github.com/YOUR_USERNAME/XNL-21BAI10418-LLM-4/actions/workflows/sync.yml/badge.svg)](https://github.com/YOUR_USERNAME/XNL-21BAI10418-LLM-4/actions/workflows/sync.yml)
 
 ## Features
 
-- 🤖 Intelligent financial assistance using fine-tuned Zephyr-7B model
-- 💬 Real-time chat interface with WebSocket support
-- 🎨 Modern, responsive UI with Material-UI and Framer Motion
-- 🌙 Light/Dark theme support
-- 📱 Mobile-friendly design
-- ⚡ Fast and efficient message handling
-- 🔄 Automatic reconnection handling
-- 📝 Message history with clear chat functionality
+- 🤖 Advanced language model using DialoGPT
+- 🚀 FastAPI backend for high performance
+- ⚛️ Modern React frontend with Material-UI
+- 🔄 Real-time chat interface with WebSocket support
+- 🎨 Responsive and intuitive UI design
+- 🔒 Secure deployment configuration
+- 🔄 Automatic sync between GitHub and Hugging Face Spaces
+
+## Live Demo
+
+Try the live demo on Hugging Face Spaces: [Financial Chatbot Demo](https://huggingface.co/spaces/Chit1324/XNL-21BAI10418-LLM-4)
 
 ## Tech Stack
 
-### Frontend
-- React 18 with TypeScript
-- Material-UI for components
-- Framer Motion for animations
-- WebSocket for real-time communication
-- Vite for fast development and building
+- **Backend**:
+  - FastAPI
+  - Python 3.10+
+  - Transformers (DialoGPT)
+  - WebSocket support
+  - Nginx
 
-### Backend
-- FastAPI for the web server
-- WebSocket support for real-time chat
-- Zephyr-7B language model
-- Hugging Face Transformers
-- Python 3.10+
+- **Frontend**:
+  - React
+  - Material-UI
+  - Framer Motion
+  - TypeScript
 
-## Prerequisites
+- **Deployment**:
+  - Docker
+  - Hugging Face Spaces
+  - GitHub Actions
 
-- Python 3.10 or higher
-- Node.js 18 or higher
-- CUDA-capable GPU (recommended for model inference)
-- Docker and Docker Compose (optional, for containerized deployment)
+## Local Development
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/YOUR_USERNAME/XNL-21BAI10418-LLM-4.git
+   cd XNL-21BAI10418-LLM-4
+   ```
+
+2. Install backend dependencies:
+   ```bash
+   cd backend
+   pip install -r requirements.txt
+   ```
+
+3. Install frontend dependencies:
+   ```bash
+   cd frontend
+   npm install
+   ```
+
+4. Start the development servers:
+   ```bash
+   # Terminal 1 - Backend
+   cd backend
+   python -m uvicorn app.main:app --reload
+
+   # Terminal 2 - Frontend
+   cd frontend
+   npm run dev
+   ```
+
+## Deployment
+
+The project is automatically deployed to Hugging Face Spaces when changes are pushed to the main branch. The deployment process is handled by GitHub Actions.
+
+### Setting up GitHub Actions
+
+1. Generate a Hugging Face token from your [Hugging Face account settings](https://huggingface.co/settings/tokens)
+2. Add the token as a secret named `HF_TOKEN` in your GitHub repository settings
+3. Push changes to the main branch to trigger automatic deployment
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Commit your changes: `git commit -m 'Add amazing feature'`
+4. Push to the branch: `git push origin feature/amazing-feature`
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+
+- [Hugging Face](https://huggingface.co/) for the model hosting and Spaces platform
+- [FastAPI](https://fastapi.tiangolo.com/) for the excellent API framework
+- [React](https://reactjs.org/) for the frontend framework
+- [Material-UI](https://mui.com/) for the UI components
 
 ## Project Structure
 
@@ -247,22 +309,3 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
 3. Serve the frontend build files using a web server (e.g., nginx)
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Acknowledgments
-
-- [Zephyr-7B](https://huggingface.co/HuggingFaceH4/zephyr-7b-beta) - The base language model
-- [FastAPI](https://fastapi.tiangolo.com/) - The web framework
-- [React](https://reactjs.org/) - The frontend library
-- [Material-UI](https://mui.com/) - The UI component library

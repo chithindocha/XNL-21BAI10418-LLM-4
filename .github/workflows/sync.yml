@@ -1,0 +1,28 @@
+name: Sync to Hugging Face Spaces
+
+on:
+  push:
+    branches:
+      - main  # or your default branch name
+  workflow_dispatch:  # allows manual triggering
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Push to Hugging Face Spaces
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          git remote add space https://USER:$HF_TOKEN@huggingface.co/spaces/Chit1324/XNL-21BAI10418-LLM-4
+          git push space main 
