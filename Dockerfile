@@ -19,7 +19,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
 COPY backend /app/backend
-COPY frontend/build /app/frontend/build
+COPY frontend/dist /app/frontend/build
 
 # Set environment variables
 ENV PYTHONPATH=/app
