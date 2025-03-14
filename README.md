@@ -5,7 +5,7 @@ colorFrom: blue
 colorTo: indigo
 sdk: docker
 sdk_version: "3.8"
-app_file: backend/app/main.py
+app_file: app.py
 pinned: false
 ---
 
