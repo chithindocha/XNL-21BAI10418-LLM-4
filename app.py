@@ -16,52 +16,97 @@ def run_backend():
     """Start the FastAPI backend server"""
     try:
         logger.info("Starting FastAPI backend server...")
+        # Add backend directory to Python path
+        backend_path = str(Path(__file__).parent / "backend")
+        if backend_path not in sys.path:
+            sys.path.append(backend_path)
+            
+        # Start the backend server with output capture
         backend_process = subprocess.Popen(
-            ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000"],
+            [sys.executable, "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"],
             stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE
+            stderr=subprocess.PIPE,
+            cwd=backend_path,
+            text=True,
+            bufsize=1,
+            universal_newlines=True
         )
-        # Wait for the server to start
-        time.sleep(5)
-        if backend_process.poll() is not None:
-            logger.error("Backend server failed to start")
-            sys.exit(1)
-        logger.info("Backend server started successfully")
-        return backend_process
+        
+        # Monitor the startup
+        start_time = time.time()
+        while time.time() - start_time < 10:  # Wait up to 10 seconds
+            if backend_process.poll() is not None:
+                # Process died, get the error message
+                _, stderr = backend_process.communicate()
+                logger.error(f"Backend server failed to start with error: {stderr}")
+                sys.exit(1)
+                
+            # Check stdout/stderr for startup progress
+            stderr = backend_process.stderr.readline()
+            if stderr:
+                logger.info(f"Backend startup: {stderr.strip()}")
+            
+            stdout = backend_process.stdout.readline()
+            if stdout:
+                logger.info(f"Backend startup: {stdout.strip()}")
+                if "Application startup complete" in stdout:
+                    logger.info("Backend server started successfully")
+                    return backend_process
+                
+            time.sleep(0.1)
+            
+        logger.error("Backend server startup timed out")
+        backend_process.terminate()
+        sys.exit(1)
+        
     except Exception as e:
-        logger.error(f"Error starting backend server: {e}")
+        logger.error(f"Error starting backend server: {str(e)}")
         sys.exit(1)
 
 def run_nginx():
     """Start the Nginx server"""
     try:
         logger.info("Starting Nginx server...")
-        # Ensure Nginx has proper permissions
-        subprocess.run(["sudo", "chown", "-R", "user:user", "/var/log/nginx"])
-        subprocess.run(["sudo", "chown", "-R", "user:user", "/var/run"])
-        
-        # Start Nginx
+        # Start Nginx without sudo (since we already set permissions in Dockerfile)
         nginx_process = subprocess.Popen(
             ["nginx", "-g", "daemon off;"],
             stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE
+            stderr=subprocess.PIPE,
+            text=True,
+            bufsize=1,
+            universal_newlines=True
         )
-        # Wait for Nginx to start
-        time.sleep(2)
-        if nginx_process.poll() is not None:
-            logger.error("Nginx server failed to start")
-            sys.exit(1)
+        
+        # Monitor the startup
+        start_time = time.time()
+        while time.time() - start_time < 5:  # Wait up to 5 seconds
+            if nginx_process.poll() is not None:
+                # Process died, get the error message
+                _, stderr = nginx_process.communicate()
+                logger.error(f"Nginx server failed to start with error: {stderr}")
+                sys.exit(1)
+                
+            # Check stderr for any errors
+            stderr = nginx_process.stderr.readline()
+            if stderr:
+                logger.error(f"Nginx startup error: {stderr.strip()}")
+                nginx_process.terminate()
+                sys.exit(1)
+                
+            time.sleep(0.1)
+            
         logger.info("Nginx server started successfully")
         return nginx_process
+        
     except Exception as e:
-        logger.error(f"Error starting Nginx server: {e}")
+        logger.error(f"Error starting Nginx server: {str(e)}")
         sys.exit(1)
 
 def main():
     """Main function to start all services"""
     try:
         # Set environment variables
-        os.environ["MODEL_PATH"] = "/app/finetuned_model"
+        os.environ["MODEL_PATH"] = str(Path(__file__).parent / "backend" / "finetuned_model")
         os.environ["CUDA_VISIBLE_DEVICES"] = "0"
         
         # Start backend server
@@ -72,25 +117,29 @@ def main():
         
         logger.info("All services started successfully")
         
-        # Keep the main process running
-        try:
-            while True:
+        # Keep the main process running and monitor child processes
+        while True:
+            try:
                 time.sleep(1)
                 # Check if any process has died
                 if backend_process.poll() is not None:
-                    logger.error("Backend server died unexpectedly")
+                    stdout, stderr = backend_process.communicate()
+                    logger.error(f"Backend server died unexpectedly. Error: {stderr}")
                     sys.exit(1)
+                    
                 if nginx_process.poll() is not None:
-                    logger.error("Nginx server died unexpectedly")
+                    stdout, stderr = nginx_process.communicate()
+                    logger.error(f"Nginx server died unexpectedly. Error: {stderr}")
                     sys.exit(1)
-        except KeyboardInterrupt:
-            logger.info("Shutting down services...")
-            backend_process.terminate()
-            nginx_process.terminate()
-            sys.exit(0)
+                    
+            except KeyboardInterrupt:
+                logger.info("Shutting down services...")
+                backend_process.terminate()
+                nginx_process.terminate()
+                sys.exit(0)
             
     except Exception as e:
-        logger.error(f"Error in main process: {e}")
+        logger.error(f"Error in main process: {str(e)}")
         sys.exit(1)
 
 if __name__ == "__main__":
