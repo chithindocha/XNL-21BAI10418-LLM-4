@@ -10,11 +10,9 @@ def run_backend():
     os.chdir(backend_dir)
     subprocess.Popen([sys.executable, "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"])
 
-def run_frontend():
-    """Run the frontend development server"""
-    frontend_dir = Path("frontend")
-    os.chdir(frontend_dir)
-    subprocess.Popen(["npm", "run", "dev"])
+def run_nginx():
+    """Start Nginx server"""
+    subprocess.Popen(["nginx", "-g", "daemon off;"])
 
 def main():
     # Set environment variables
@@ -28,9 +26,9 @@ def main():
     # Wait for backend to start
     time.sleep(5)
     
-    # Start frontend server
-    print("Starting frontend server...")
-    run_frontend()
+    # Start Nginx
+    print("Starting Nginx server...")
+    run_nginx()
     
     # Keep the main process running
     try:
